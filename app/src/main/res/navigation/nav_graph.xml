@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/start_fragment">
+
+    <fragment
+        android:id="@+id/start_fragment"
+        android:name="app.suhocki.tgstickers.start.StartFragment"
+        android:label="StartFragment"
+        tools:layout="@layout/fragment_start">
+
+        <action
+            android:id="@+id/action_start_fragment_to_stickers_fragment"
+            app:destination="@id/stickers_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stickers_fragment"
+        android:name="app.suhocki.tgstickers.stickers.StickersFragment"
+        android:label="StickersFragment"
+        tools:layout="@layout/fragment_stickers" />
+
+</navigation>
