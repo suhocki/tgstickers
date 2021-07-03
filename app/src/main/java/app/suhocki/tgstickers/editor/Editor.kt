@@ -15,9 +15,7 @@ class Editor(
             return
         }
 
-        val safeUri = contentResolver.openInputStream(uri) ?: return
-
-        val step = Step.AddImage(safeUri)
+        val step = Step.AddImage(uri, contentResolver)
         val data = ArrayDeque(steps.value + step)
 
         steps.tryEmit(data)

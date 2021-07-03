@@ -13,7 +13,6 @@ import app.suhocki.tgstickers.editor.editorModule
 import app.suhocki.tgstickers.global.adapter.UiItem
 import app.suhocki.tgstickers.global.adapter.UiItemAdapter
 import app.suhocki.tgstickers.global.navigation.navigateSafe
-import app.suhocki.tgstickers.start.StartFragment
 import app.suhocki.tgstickers.stickers.add.addDelegate
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.Flow

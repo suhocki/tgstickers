@@ -20,8 +20,10 @@ class ImagePicker(
             this::class.toString(),
             lifecycleOwner,
             ActivityResultContracts.GetContent()
-        ) {
-            callback?.invoke(it)
+        ) { uri: Uri? ->
+            if (uri != null) {
+                callback?.invoke(uri)
+            }
         }
 
     fun pickImage() {
