@@ -11,6 +11,8 @@ import toothpick.InjectConstructor
 class Editor(
     private val steps: MutableStateFlow<ArrayDeque<Step>>
 ) {
+    val movement = Movement()
+
     fun addImage(uri: Uri?, contentResolver: ContentResolver) {
         if (uri == null) {
             return
@@ -22,15 +24,29 @@ class Editor(
         steps.tryEmit(data)
     }
 
-    fun move(from: Point, to: Point) {
-        val step = steps.value
-            .reversed()
-            .firstOrNull { step -> step.contains(from) }
-            ?: return
+    inner class Movement {
+        private var selected: Step? = null
+        private var deltaCenter = Point(0, 0)
 
-        step.move(to)
+        fun start(point: Point) {
+            selected = steps.value
+                .firstOrNull { step -> step.contains(point) }
+                ?.also { selected ->
+                    deltaCenter = Point(
+                        selected.center.x - point.x,
+                        selected.center.y - point.y
+                    )
+                    steps.value.remove(selected)
+                    steps.value.add(selected)
+                }
+        }
 
-        steps.tryEmit(ArrayDeque(steps.value - step))
-        steps.tryEmit(ArrayDeque(steps.value + step))
+        fun move(point: Point) {
+            val center = Point(
+                point.x + deltaCenter.x,
+                point.y + deltaCenter.y,
+            )
+            selected?.move(center)
+        }
     }
 }

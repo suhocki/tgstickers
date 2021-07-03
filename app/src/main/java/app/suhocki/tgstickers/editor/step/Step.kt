@@ -6,23 +6,26 @@ import android.net.Uri
 import androidx.core.graphics.contains
 
 sealed class Step {
+    abstract var center: Point
+
     abstract fun draw(canvas: Canvas)
     abstract fun contains(point: Point): Boolean
-    abstract fun move(topLeft: Point)
+    abstract fun move(center: Point)
 
     class AddImage(
         private val uri: Uri,
         private val contentResolver: ContentResolver
     ) : Step() {
         private var rect: Rect? = null
-        private var topLeft: Point? = null
+
+        override lateinit var center: Point
 
         override fun draw(canvas: Canvas) {
             val inputStream = contentResolver.openInputStream(uri)
             val bitmap = BitmapFactory.decodeStream(inputStream)
 
-            if (topLeft == null) {
-                initializeTopLeft(bitmap, canvas)
+            if (!::center.isInitialized) {
+                initializeCenter(canvas)
             }
             calculateRect(bitmap)
 
@@ -33,28 +36,23 @@ sealed class Step {
             return rect?.contains(point) == true
         }
 
-        override fun move(topLeft: Point) {
-            this.topLeft = topLeft
+        override fun move(center: Point) {
+            this.center = center
         }
 
-        private fun initializeTopLeft(bitmap: Bitmap, canvas: Canvas) {
-            val canvasCenter = Point(
+        private fun initializeCenter(canvas: Canvas) {
+            center = Point(
                 canvas.clipBounds.centerX(),
                 canvas.clipBounds.centerY()
-            )
-            topLeft = Point(
-                canvasCenter.x - bitmap.width / 2,
-                canvasCenter.y - bitmap.height / 2,
             )
         }
 
         private fun calculateRect(bitmap: Bitmap) {
-            val topLeft = requireNotNull(topLeft)
             rect = Rect(
-                topLeft.x,
-                topLeft.y,
-                topLeft.x + bitmap.width,
-                topLeft.y + bitmap.height
+                center.x - bitmap.width / 2,
+                center.y - bitmap.height / 2,
+                center.x + bitmap.width / 2,
+                center.y + bitmap.height / 2
             )
         }
     }

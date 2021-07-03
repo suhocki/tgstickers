@@ -22,11 +22,15 @@ class EditorFragment(
 ) : Fragment(R.layout.fragment_editor) {
     private val viewBinding: FragmentEditorBinding by viewBinding()
     private var imagePicker: ImagePicker? = null
+    private var drawer: Drawer? = null
 
     private val gestureRecognizer = GestureRecognizer(
-        move = { from, to ->
-            editor.move(from, to)
-        }
+        start = { point ->
+            editor.movement.start(point)
+        },
+        move = { point ->
+            editor.movement.move(point)
+        },
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +50,7 @@ class EditorFragment(
             gestureRecognizer.handle(event)
             true
         }
-        Drawer(lifecycleScope, viewBinding.surfaceView, steps)
+        drawer = Drawer(lifecycleScope, viewBinding.surfaceView, steps)
     }
 
     private fun initImagePicker() {

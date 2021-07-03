@@ -4,6 +4,8 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
+import android.os.SystemClock
+import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -31,8 +33,16 @@ class Drawer(
         }
 
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback2 {
+            private var drawingScope: CoroutineScope? = null
+
             override fun surfaceCreated(holder: SurfaceHolder) {
                 this@Drawer.holder = holder
+                drawingScope = CoroutineScope(Dispatchers.IO)
+                drawingScope?.launch {
+                    while (isActive) {
+                        drawNextFrame()
+                    }
+                }
             }
 
             override fun surfaceChanged(
@@ -46,6 +56,7 @@ class Drawer(
 
             override fun surfaceDestroyed(holder: SurfaceHolder) {
                 this@Drawer.holder = null
+                drawingScope?.cancel()
             }
 
             override fun surfaceRedrawNeeded(holder: SurfaceHolder) {
@@ -54,13 +65,15 @@ class Drawer(
         })
     }
 
-    private fun drawNextFrame() {
+    fun drawNextFrame() {
         holder?.lockCanvas()?.let { canvas ->
+            val before = SystemClock.elapsedRealtime()
             canvas.clear()
-            steps.value.forEach { step ->
+            steps.value.toList().forEach { step ->
                 step.draw(canvas)
             }
             holder?.unlockCanvasAndPost(canvas)
+            Log.d("Drawer", "Time consumed: ${SystemClock.elapsedRealtime() - before}")
         }
     }
 
