@@ -19,6 +19,17 @@
         android:id="@+id/stickers_fragment"
         android:name="app.suhocki.tgstickers.stickers.StickersFragment"
         android:label="StickersFragment"
-        tools:layout="@layout/fragment_stickers" />
+        tools:layout="@layout/fragment_stickers">
+
+        <action
+            android:id="@+id/action_stickers_fragment_to_editor_fragment"
+            app:destination="@id/editor_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editor_fragment"
+        android:name="app.suhocki.tgstickers.editor.EditorFragment"
+        android:label="EditorFragment"
+        tools:layout="@layout/fragment_editor"/>
 
 </navigation>

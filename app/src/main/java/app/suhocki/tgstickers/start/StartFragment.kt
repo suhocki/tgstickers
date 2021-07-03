@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import app.suhocki.tgstickers.R
+import app.suhocki.tgstickers.TgStickersActivity
 import app.suhocki.tgstickers.databinding.FragmentStartBinding
 import app.suhocki.tgstickers.global.navigation.navigateSafe
 import app.suhocki.tgstickers.stickers.StickersFragment
@@ -18,7 +19,7 @@ class StartFragment : Fragment(R.layout.fragment_start) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        KTP.openScope(StartFragment::class)
+        KTP.openScopes(TgStickersActivity::class, StartFragment::class)
             .closeOnViewModelCleared(this)
     }
 
