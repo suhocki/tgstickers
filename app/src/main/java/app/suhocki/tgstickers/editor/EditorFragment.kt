@@ -1,5 +1,6 @@
 package app.suhocki.tgstickers.editor
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -22,9 +23,11 @@ class EditorFragment(
     private val viewBinding: FragmentEditorBinding by viewBinding()
     private var imagePicker: ImagePicker? = null
 
-    private val drawer: Drawer by lazy {
-        Drawer(lifecycleScope, viewBinding.surfaceView, steps)
-    }
+    private val gestureRecognizer = GestureRecognizer(
+        move = { from, to ->
+            editor.move(from, to)
+        }
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +36,17 @@ class EditorFragment(
         initImagePicker()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewBinding.addPicture.setOnClickListener {
             imagePicker?.pickImage()
         }
-        drawer
+        viewBinding.surfaceView.setOnTouchListener { _, event ->
+            gestureRecognizer.handle(event)
+            true
+        }
+        Drawer(lifecycleScope, viewBinding.surfaceView, steps)
     }
 
     private fun initImagePicker() {

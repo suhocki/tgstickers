@@ -1,5 +1,9 @@
 package app.suhocki.tgstickers.editor
 
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -47,16 +51,26 @@ class Drawer(
             override fun surfaceRedrawNeeded(holder: SurfaceHolder) {
                 this@Drawer.holder = holder
             }
-
         })
     }
 
     private fun drawNextFrame() {
         holder?.lockCanvas()?.let { canvas ->
+            canvas.clear()
             steps.value.forEach { step ->
                 step.draw(canvas)
             }
             holder?.unlockCanvasAndPost(canvas)
+        }
+    }
+
+    companion object {
+        private val transparentPaint = Paint().apply {
+            xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+        }
+
+        private fun Canvas.clear() {
+            drawRect(0f, 0f, width.toFloat(), height.toFloat(), transparentPaint)
         }
     }
 }
