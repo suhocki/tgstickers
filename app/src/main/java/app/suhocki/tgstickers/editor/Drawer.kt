@@ -67,13 +67,11 @@ class Drawer(
 
     fun drawNextFrame() {
         holder?.lockCanvas()?.let { canvas ->
-            val before = SystemClock.elapsedRealtime()
             canvas.clear()
             steps.value.toList().forEach { step ->
                 step.draw(canvas)
             }
             holder?.unlockCanvasAndPost(canvas)
-            Log.d("Drawer", "Time consumed: ${SystemClock.elapsedRealtime() - before}")
         }
     }
 

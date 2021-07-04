@@ -15,6 +15,7 @@ import app.suhocki.tgstickers.global.adapter.UiItemAdapter
 import app.suhocki.tgstickers.global.navigation.navigateSafe
 import app.suhocki.tgstickers.stickers.add.addDelegate
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.slazzer.bgremover.Slazzer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import toothpick.InjectConstructor
@@ -31,6 +32,7 @@ class StickersFragment(
         addDelegate {
             KTP.openScopes(StickersFragment::class, EditorFragment::class)
                 .installModules(editorModule())
+
             findNavController().navigateSafe(
                 StickersFragmentDirections.actionStickersFragmentToEditorFragment()
             )

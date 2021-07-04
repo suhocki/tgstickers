@@ -4,13 +4,24 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import app.suhocki.tgstickers.R
 import app.suhocki.tgstickers.TgStickersActivity
 import app.suhocki.tgstickers.databinding.FragmentEditorBinding
 import app.suhocki.tgstickers.editor.step.Step
+import app.suhocki.tgstickers.editor.tokenUpdate.TokenUpdateDialog
+import app.suhocki.tgstickers.global.navigation.navigateSafe
+import app.suhocki.tgstickers.global.prefs.Prefs
+import app.suhocki.tgstickers.global.snackbar.showSnackbar
+import app.suhocki.tgstickers.global.viewmodel.viewModel
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.slazzer.bgremover.Slazzer
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import toothpick.InjectConstructor
 import toothpick.ktp.KTP
 import toothpick.smoothie.viewmodel.closeOnViewModelCleared
@@ -19,8 +30,10 @@ import toothpick.smoothie.viewmodel.closeOnViewModelCleared
 class EditorFragment(
     private val steps: StateFlow<List<Step>>,
     private val editor: Editor,
+    private val prefs: Prefs,
 ) : Fragment(R.layout.fragment_editor) {
     private val viewBinding: FragmentEditorBinding by viewBinding()
+    private val viewModel: EditorViewModel by viewModel()
     private var imagePicker: ImagePicker? = null
     private var drawer: Drawer? = null
 
@@ -38,6 +51,7 @@ class EditorFragment(
         KTP.openScope(EditorFragment::class)
             .closeOnViewModelCleared(this)
         initImagePicker()
+        initViewModelObservers()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -46,10 +60,18 @@ class EditorFragment(
         viewBinding.addPicture.setOnClickListener {
             imagePicker?.pickImage()
         }
+        viewBinding.magicButton.setOnClickListener {
+            val addImage = editor.movement.selected as? Step.AddImage
+            if (addImage != null) {
+                Slazzer.init(prefs.slazzerToken)
+                viewModel.removeBackground(addImage)
+            }
+        }
         viewBinding.surfaceView.setOnTouchListener { _, event ->
             gestureRecognizer.handle(event)
             true
         }
+
         drawer = Drawer(lifecycleScope, viewBinding.surfaceView, steps)
     }
 
@@ -57,6 +79,31 @@ class EditorFragment(
         imagePicker = (requireActivity() as TgStickersActivity).imagePicker
         imagePicker?.subscribe(this) { uri ->
             editor.addImage(uri, requireContext().contentResolver)
+        }
+    }
+
+    private fun initViewModelObservers() {
+        lifecycleScope.launch {
+            viewModel.errorHandler.errorText
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .collect { text -> showSnackbar(text) }
+        }
+        lifecycleScope.launch {
+            viewModel.removeBackgroundProgress
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .collect { progress ->
+                    viewBinding.magicButton.progress = progress
+                }
+        }
+        lifecycleScope.launch {
+            viewModel.suggestTokenUpdate
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .collect {
+                    KTP.openScopes(EditorFragment::class, TokenUpdateDialog::class)
+                    findNavController().navigateSafe(
+                        EditorFragmentDirections.actionEditorFragmentToTokenUpdateDialog()
+                    )
+                }
         }
     }
 }

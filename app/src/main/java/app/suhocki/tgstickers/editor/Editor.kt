@@ -1,6 +1,7 @@
 package app.suhocki.tgstickers.editor
 
 import android.content.ContentResolver
+import android.graphics.BitmapFactory
 import android.graphics.Point
 import android.net.Uri
 import app.suhocki.tgstickers.editor.step.Step
@@ -18,18 +19,23 @@ class Editor(
             return
         }
 
-        val step = Step.AddImage(uri, contentResolver)
+        val inputStream = contentResolver.openInputStream(uri)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+
+        val step = Step.AddImage(bitmap)
         val data = ArrayDeque(steps.value + step)
 
         steps.tryEmit(data)
     }
 
     inner class Movement {
-        private var selected: Step? = null
         private var deltaCenter = Point(0, 0)
+
+        var selected: Step? = null
 
         fun start(point: Point) {
             selected = steps.value
+                .reversed()
                 .firstOrNull { step -> step.contains(point) }
                 ?.also { selected ->
                     deltaCenter = Point(

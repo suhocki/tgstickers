@@ -30,6 +30,18 @@
         android:id="@+id/editor_fragment"
         android:name="app.suhocki.tgstickers.editor.EditorFragment"
         android:label="EditorFragment"
-        tools:layout="@layout/fragment_editor"/>
+        tools:layout="@layout/fragment_editor">
+
+        <action
+            android:id="@+id/action_editor_fragment_to_token_update_dialog"
+            app:destination="@id/token_update_dialog" />
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/token_update_dialog"
+        android:name="app.suhocki.tgstickers.editor.tokenUpdate.TokenUpdateDialog"
+        android:label="TokenUpdateDialog"
+        tools:layout="@layout/dialog_token_update"/>
 
 </navigation>

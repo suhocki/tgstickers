@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">TgStickers</string>
     <string name="start">Start</string>
+    <string name="token_update_title">Free limit exceeded</string>
+    <string name="token_update_description">But you still can register your own <a href="https://www.slazzer.com/social_share/WZf24wQFibE9waRxeC">slazzer.com</a> account and paste a new API Key here:</string>
+    <string name="token_update_hint">Find API Key at "My Account" -> "Api Key".</string>
+    <string name="token_update_your_api_key">Your API Key</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
 </resources>

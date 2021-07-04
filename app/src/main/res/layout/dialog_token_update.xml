@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="300dp"
+    android:paddingTop="16dp"
+    android:paddingHorizontal="16dp"
+    android:orientation="vertical"
+    tools:context=".editor.tokenUpdate.TokenUpdateDialog">
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/token_update_title" />
+
+    <TextView
+        android:id="@+id/description"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/token_update_description" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/token_update_your_api_key"
+        android:importantForAutofill="no"
+        android:inputType="text" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/token_update_hint" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/cancel"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/apply"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/apply" />
+
+    </LinearLayout>
+
+</LinearLayout>

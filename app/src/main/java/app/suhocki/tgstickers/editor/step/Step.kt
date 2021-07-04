@@ -13,17 +13,13 @@ sealed class Step {
     abstract fun move(center: Point)
 
     class AddImage(
-        private val uri: Uri,
-        private val contentResolver: ContentResolver
+        var bitmap: Bitmap,
     ) : Step() {
         private var rect: Rect? = null
 
         override lateinit var center: Point
 
         override fun draw(canvas: Canvas) {
-            val inputStream = contentResolver.openInputStream(uri)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-
             if (!::center.isInitialized) {
                 initializeCenter(canvas)
             }
