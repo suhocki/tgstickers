@@ -30,6 +30,7 @@ import toothpick.InjectConstructor
 import toothpick.ktp.KTP
 import toothpick.smoothie.viewmodel.closeOnViewModelCleared
 
+
 @InjectConstructor
 class EditorFragment(
     private val steps: StateFlow<List<Step>>,
@@ -90,6 +91,9 @@ class EditorFragment(
         }
         viewBinding.exit.setOnClickListener {
             findNavController().navigateUp()
+        }
+        viewBinding.done.setOnClickListener {
+            showSnackbar("Not implemented")
         }
 
         drawer = Drawer(lifecycleScope, viewBinding.surfaceView, steps)
