@@ -1,9 +1,6 @@
 package app.suhocki.tgstickers.editor
 
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
+import android.graphics.*
 import android.os.SystemClock
 import android.util.Log
 import android.view.SurfaceHolder
@@ -32,6 +29,8 @@ class Drawer(
             }
         }
 
+        surfaceView.setZOrderOnTop(true)
+        surfaceView.holder.setFormat(PixelFormat.TRANSLUCENT)
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback2 {
             private var drawingScope: CoroutineScope? = null
 

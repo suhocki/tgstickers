@@ -1,8 +1,9 @@
 package app.suhocki.tgstickers.editor.step
 
-import android.content.ContentResolver
-import android.graphics.*
-import android.net.Uri
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Point
+import android.graphics.Rect
 import androidx.core.graphics.contains
 
 sealed class Step {

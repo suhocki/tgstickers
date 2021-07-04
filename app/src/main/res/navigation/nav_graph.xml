@@ -36,6 +36,10 @@
             android:id="@+id/action_editor_fragment_to_token_update_dialog"
             app:destination="@id/token_update_dialog" />
 
+        <action
+            android:id="@+id/action_editor_fragment_to_text_picker_dialog"
+            app:destination="@id/text_picker_dialog" />
+
     </fragment>
 
     <dialog
@@ -43,5 +47,11 @@
         android:name="app.suhocki.tgstickers.editor.tokenUpdate.TokenUpdateDialog"
         android:label="TokenUpdateDialog"
         tools:layout="@layout/dialog_token_update"/>
+
+    <dialog
+        android:id="@+id/text_picker_dialog"
+        android:name="app.suhocki.tgstickers.editor.textPicker.TextPickerDialog"
+        android:label="TextPickerDialog"
+        tools:layout="@layout/dialog_text_picker"/>
 
 </navigation>

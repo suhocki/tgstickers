@@ -33,6 +33,11 @@ class MagicButton @JvmOverloads constructor(
         viewBinding.imageView.setOnClickListener(listener)
     }
 
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+        viewBinding.imageView.isEnabled = enabled
+    }
+
     @SuppressLint("SetTextI18n")
     private fun refreshState() {
         with(viewBinding) {

@@ -38,7 +38,10 @@ class EditorViewModel(
 
     companion object {
         private fun isFreeAccessDenied(throwable: Throwable): Boolean {
-            return throwable.message?.contains("402") == true
+            return throwable.message?.run {
+                contains("402")
+                contains("Invalid api key")
+            } == true
         }
     }
 

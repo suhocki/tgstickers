@@ -12,6 +12,8 @@ import app.suhocki.tgstickers.R
 import app.suhocki.tgstickers.TgStickersActivity
 import app.suhocki.tgstickers.databinding.FragmentEditorBinding
 import app.suhocki.tgstickers.editor.step.Step
+import app.suhocki.tgstickers.editor.textPicker.TextPickerDialog
+import app.suhocki.tgstickers.editor.textPicker.textPickerModule
 import app.suhocki.tgstickers.editor.tokenUpdate.TokenUpdateDialog
 import app.suhocki.tgstickers.global.navigation.navigateSafe
 import app.suhocki.tgstickers.global.prefs.Prefs
@@ -19,6 +21,8 @@ import app.suhocki.tgstickers.global.snackbar.showSnackbar
 import app.suhocki.tgstickers.global.viewmodel.viewModel
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.slazzer.bgremover.Slazzer
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -35,11 +39,16 @@ class EditorFragment(
     private val viewBinding: FragmentEditorBinding by viewBinding()
     private val viewModel: EditorViewModel by viewModel()
     private var imagePicker: ImagePicker? = null
+    private var textFlow = MutableSharedFlow<String>(
+        onBufferOverflow = BufferOverflow.DROP_LATEST,
+        extraBufferCapacity = 1
+    )
     private var drawer: Drawer? = null
 
     private val gestureRecognizer = GestureRecognizer(
         start = { point ->
             editor.movement.start(point)
+            updateActions()
         },
         move = { point ->
             editor.movement.move(point)
@@ -51,6 +60,7 @@ class EditorFragment(
         KTP.openScope(EditorFragment::class)
             .closeOnViewModelCleared(this)
         initImagePicker()
+        initTextPicker()
         initViewModelObservers()
     }
 
@@ -59,6 +69,13 @@ class EditorFragment(
         super.onViewCreated(view, savedInstanceState)
         viewBinding.addPicture.setOnClickListener {
             imagePicker?.pickImage()
+        }
+        viewBinding.addText.setOnClickListener {
+            KTP.openScopes(EditorFragment::class, TextPickerDialog::class)
+                .installModules(textPickerModule(textFlow))
+            findNavController().navigateSafe(
+                EditorFragmentDirections.actionEditorFragmentToTextPickerDialog()
+            )
         }
         viewBinding.magicButton.setOnClickListener {
             val addImage = editor.movement.selected as? Step.AddImage
@@ -71,14 +88,30 @@ class EditorFragment(
             gestureRecognizer.handle(event)
             true
         }
+        viewBinding.exit.setOnClickListener {
+            findNavController().navigateUp()
+        }
 
         drawer = Drawer(lifecycleScope, viewBinding.surfaceView, steps)
+
+        updateActions()
     }
 
     private fun initImagePicker() {
         imagePicker = (requireActivity() as TgStickersActivity).imagePicker
         imagePicker?.subscribe(this) { uri ->
             editor.addImage(uri, requireContext().contentResolver)
+            updateActions()
+        }
+    }
+
+    private fun initTextPicker() {
+        lifecycleScope.launch {
+            textFlow
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .collect { text ->
+                    editor.addText(text, resources)
+                }
         }
     }
 
@@ -105,5 +138,9 @@ class EditorFragment(
                     )
                 }
         }
+    }
+
+    private fun updateActions() {
+        viewBinding.magicButton.isEnabled = editor.movement.selected is Step.AddImage
     }
 }
